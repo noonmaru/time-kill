@@ -88,7 +88,7 @@ public class TimeKillProcess
 
             for (Player onlinePlayer : Bukkit.getOnlinePlayers())
             {
-                onlinePlayer.sendTitle("게임 종료!", message, 0, 100, 5);
+                onlinePlayer.sendTitle("게임 종료!", message, 5, 100, 5);
             }
         }
 

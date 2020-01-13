@@ -41,6 +41,6 @@ processResources {
 
 task spigotJar(type: Copy) {
     from jar
-//    into 'E:\\pluginenvbackup\\servertest\\plugins'
-    into 'W:\\Servers\\time-kill\\plugins'
+    into 'E:\\pluginenvbackup\\servertest\\plugins'
+//    into 'W:\\Servers\\time-kill\\plugins'
 }

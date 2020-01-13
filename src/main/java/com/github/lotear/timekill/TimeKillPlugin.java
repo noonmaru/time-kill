@@ -7,9 +7,12 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.github.noonmaru.tap.command.TabSupport;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,6 +26,13 @@ public final class TimeKillPlugin extends JavaPlugin
     private ProtocolManager protocolManager;
 
     private TimeKillProcess process;
+
+    private static TimeKillPlugin instance;
+
+    public static TimeKillPlugin getInstance()
+    {
+        return instance;
+    }
 
     @Override
     public void onLoad()
@@ -38,6 +48,8 @@ public final class TimeKillPlugin extends JavaPlugin
         Config.load(getConfig());
 
         getServer().getScheduler().runTaskTimer(this, new ConfigReloader(new File(getDataFolder(), "config.yml"), Config::load, getLogger()), 0, 1);
+
+        instance = this;
 
         protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT)
         {
@@ -61,6 +73,7 @@ public final class TimeKillPlugin extends JavaPlugin
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
+        Player commander = (Player) sender;
         if (args.length == 0)
             return false;
 
@@ -71,6 +84,7 @@ public final class TimeKillPlugin extends JavaPlugin
             if (startProcess())
             {
                 sender.sendMessage("게임을 시작했습니다.");
+                commander.chat("/t t");
             }
             else
             {
@@ -112,6 +126,11 @@ public final class TimeKillPlugin extends JavaPlugin
         if (process != null)
         {
             return false;
+        }
+
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+        {
+            onlinePlayer.sendTitle(ChatColor.GREEN + "게임 시작!", " ", 5, 60, 5);
         }
 
         process = new TimeKillProcess(this);

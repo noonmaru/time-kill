@@ -2,13 +2,11 @@ package com.github.lotear.timekill;
 
 import com.github.noonmaru.tap.ChatType;
 import com.github.noonmaru.tap.packet.Packet;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class TimePlayer
 {
@@ -85,7 +83,7 @@ public class TimePlayer
     public void onUpdate()
     {
         int sec = remainTick / 20;
-        Packet.INFO.chat(String.format("%02d:%02d", sec / 60, sec % 60), ChatType.GAME_INFO).sendTo(this.bukkitPlayer);
+        Packet.INFO.chat(String.format(ChatColor.GREEN + "남은 시간 : %02d:%02d", sec / 60, sec % 60), ChatType.GAME_INFO).sendTo(this.bukkitPlayer);
         remainTick--;
 
         if (remainTick <= 0)
@@ -111,8 +109,13 @@ public class TimePlayer
         updateItem();
 
         PlayerInventory inv = bukkitPlayer.getInventory();
+        ItemStack timeboost = new ItemStack(Material.GHAST_TEAR);
+        ItemMeta boostim = timeboost.getItemMeta();
+        boostim.setDisplayName("시간의 결정");
+        timeboost.setItemMeta(boostim);
         inv.setItem(8, new ItemStack(Material.COMPASS));
         inv.setItem(9, new ItemStack(Material.ARROW, 64));
+        inv.addItem(timeboost);
     }
 
     private void updateItem()
@@ -129,6 +132,9 @@ public class TimePlayer
             inv.setBoots(timeEquipment.getBoots());
             inv.setItem(0, timeEquipment.getSword());
             inv.setItem(1, timeEquipment.getBow());
+
+            bukkitPlayer.sendTitle("", ChatColor.AQUA + "장비가 변화합니다....", 5, 50, 5);
+            bukkitPlayer.playSound(bukkitPlayer.getLocation(), Sound.BLOCK_ANVIL_USE, 20, 1);
         }
     }
 
@@ -166,5 +172,10 @@ public class TimePlayer
     {
         this.target = target;
         this.enemy = enemy;
+    }
+
+    public void decreaseRemainTick(int i)
+    {
+        this.remainTick -= i;
     }
 }
